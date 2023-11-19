@@ -1,0 +1,41 @@
+apiVersion: v1 #difference is apiVersion is only v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: second-app   #Creating this service so that only 'app' labels pod will be exposed to this service
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 8080
+    # - protocol: 'TCP'
+    #   port: 443
+    #   targetPort: 443
+  type: LoadBalancer
+  #Alternative to > kubectl expose deployment first-app --port=... --type=LoadBalancer
+--- #only three hyphens are required as a separator, it means a new object starts after this( yaml specific syntax)
+apiVersion: apps/v1   #Whatever k8s object u are creating this key-value pair is mandatory
+kind: Deployment
+metadata: #metadata of deployment
+  name: second-app-deployment
+spec: #specification/config of deployment
+  replicas: 3   #no. of pods instances.
+  selector:   #to add labels
+    matchLabels:
+      app: second-app
+      tier: backend
+    # matchExpressions:
+		#   - { key: app, operator: In, values: [second-app,first-app] }
+  template: # pod which should be created, NOTE: template of a deployment always describes a POD
+    metadata:
+      labels: 
+        app: second-app 
+        tier: backend
+    spec: #config of pod
+      containers:   #we can have multiple containers defined here.
+        - name: second-node
+          image: aadeetyeah/k8s-first-app:2
+          # args: ["--userid","=","testuser","--role","=","manager"]
+          # - name: ...
+          #   image: ...

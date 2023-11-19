@@ -1,0 +1,30 @@
+apiVersion: apps/v1   #Whatever k8s object u are creating this key-value pair is mandatory
+kind: Deployment
+metadata: #metadata of deployment
+  name: second-app-deployment
+  labels: 
+    group: example
+spec: #specification/config of deployment
+  replicas: 3   #no. of pods instances.
+  selector:   #to add labels
+    matchLabels:
+      app: second-app
+      tier: backend
+  template: # pod which should be created, NOTE: template of a deployment always describes a POD
+    metadata:
+      labels: 
+        app: second-app 
+        tier: backend
+    spec: #config of pod
+      containers:   #we can have multiple containers defined here.
+        - name: second-node
+          image: aadeetyeah/k8s-first-app:2
+          livenessProbe: #container is restarted, if livenessProbe fails, K8s sends the req to running app
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10 
+            initialDelaySeconds: 5 
+          # args: ["--userid","=","testuser","--role","=","manager"]
+          # - name: ...
+          #   image: ...

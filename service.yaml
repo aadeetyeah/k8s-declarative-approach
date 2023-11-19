@@ -1,0 +1,18 @@
+apiVersion: v1 #difference is apiVersion is only v1
+kind: Service
+metadata:
+  name: backend
+  labels: 
+    group: example
+spec:
+  selector:
+    app: second-app   #Creating this service so that only 'app' labels pod will be exposed to this service
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 8080
+    # - protocol: 'TCP'
+    #   port: 443
+    #   targetPort: 443
+  type: LoadBalancer
+  #Alternative to > kubectl expose deployment first-app --port=... --type=LoadBalancer
